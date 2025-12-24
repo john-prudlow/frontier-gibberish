@@ -9,6 +9,8 @@ export default function Movie() {
   const [movie, setMovie] = useState(null);
   const [favorites, setFavorites] = useState({ movies: [], games: [] });
 
+  const inFavorites = movie ? favorites.movies.some(fav => fav.id === movie.id) : false;
+
   useEffect(() => {
     const search = localStorage.getItem("movies");
     if (search) {
@@ -24,21 +26,22 @@ export default function Movie() {
     }
   }, [id]);
 
-  const handleClick = () => {
+  const handleAdd = () => {
     if (!movie) return;
 
     const newFavorite = {
       id: movie.id,
       title: movie.title,
+      year: movie.year,
       imageURL: movie.poster_path
         ? `${import.meta.env.VITE_MOVIE_API_IMG_URL}${movie.poster_path}`
         : "",
       description: movie.overview,
+      type: "movie"
     };
 
     // Check if already in favorites.movies
-    const exists = favorites.movies.some((fav) => fav.id === movie.id);
-    if (exists) {
+    if (inFavorites) {
       console.log("Already in favorites:", favorites.movies);
       return;
     }
@@ -50,8 +53,19 @@ export default function Movie() {
 
     setFavorites(updated);
     localStorage.setItem("favorites", JSON.stringify(updated));
-    console.log("FAVORITES:", updated);
+    console.log("Favorites:", updated);
   };
+
+  const handleDel = () => {
+    const updated = {
+      ...favorites,
+      movies: favorites.movies.filter((fav) => fav.id !== movie.id)
+    };
+
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
+
   
   return (
     <>
@@ -66,8 +80,12 @@ export default function Movie() {
           )}
           <div className="summary">
             <h2>{movie.title}</h2>
-            <p>{movie.overview}</p>
-            <button className={"addFavoriteBtn btn"} onClick={handleClick}><i className="fa-solid fa-plus"></i> Add to Favorites</button>
+            <p>{movie.description}</p>
+            {!inFavorites ? (
+              <button className={"addFavoriteBtn btn"} onClick={handleAdd}><i className="fa-solid fa-plus"></i> Add to Favorites</button>
+            ) : (
+            <button className={"removeFavoritBtn btn"} onClick={handleDel}><i className="fa-solid fa-minus"></i> Remove Favorite</button>
+            )}
           </div>
         </div>
       ) : (

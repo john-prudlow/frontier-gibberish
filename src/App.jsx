@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router";
-// import './App.css';
 import './style.css';
+import './css/responsive.css';
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Header from "./components/Header";
@@ -9,6 +9,7 @@ import Search from "./components/Search";
 import Movies from "./pages/Movies";
 import Movie from "./pages/Movie";
 import Games from "./pages/Games";
+import Game from "./pages/Game";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -31,7 +32,7 @@ function App() {
           <Route path="/movies" element={<Movies query={query} />} />
           <Route path="/movie/:id/:title" element={<Movie/>} />
           <Route path="/games" element={<Games/>} />
-          {/* <Route path="/game/:game" element={<Game/>} /> */}
+          <Route path="/game/:id/:title" element={<Game/>} />
           {/* <Route path="/about" element={<About/>} /> */}
           {/* <Route path="/contact" element={<ContactPage/>} />
           <Route path="/user-profile/:userId" element={<UserProfilePage />} /> */}

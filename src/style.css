@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Smokum&display=swap');
 
+* {
+    box-sizing:border-box;
+}
+
 body {
     place-items:flex-start;
     font-size:17px;
@@ -25,14 +29,14 @@ h1, h1 a, h1 a:hover {
 
 header {
     display:flex;
-    background:#260b00;
+    background:linear-gradient(to right, #350f00 15%, #170600 85%);
     color:#ffffff;
     padding:2rem 4.5rem;
     justify-content:space-between;
     align-items:center;
 }
 
-header nav ul { display:flex; margin:0; column-gap:20px; }
+header nav ul { display:flex; margin:0; padding:0; column-gap:20px; }
 
 header nav ul li {
     cursor:pointer;
@@ -55,19 +59,20 @@ header nav ul li a:hover {
 main { padding:2rem 4rem 4rem 4rem ; }
 
 .btn {
-    background:#470500;
+    background:#350f00;
     color:#fff;
 }
 
 .backBtn {
     margin-right:2rem;
+    padding:.5rem 1rem;
 }
 
 .search-bar {
     display:flex;
     background:#dcdcdc;
     margin:0;
-    padding:1rem 4.5rem;
+    padding:.75rem 4.5rem;
     align-items:center;
 }
 
@@ -77,6 +82,12 @@ main { padding:2rem 4rem 4rem 4rem ; }
     padding-top:4px;
     padding-left:8px;
     z-index:10;
+}
+
+.intro {
+    border-bottom:1px solid #2a2a2a;
+    margin-bottom:2rem;
+    padding-bottom:2rem;
 }
 
 form input[type="text"] {
@@ -104,7 +115,7 @@ form input[type="text"] {
 }
 
 .results li {
-    flex:0 0 calc((100% - (50px * 4)) / 5); /* 5 columns with 50px gaps */
+    flex:0 0 calc((100% - (50px * 4)) / 5);
     max-width:calc((100% - (50px * 4)) / 5);
     cursor:pointer;
     list-style:none;

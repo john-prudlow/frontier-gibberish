@@ -11,10 +11,21 @@ export default function Movies() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const apiURL = import.meta.env.VITE_MOVIE_API_URL;
+  const apiURL = import.meta.env.VITE_MOVIE_API_URL; // Web app uses tmdb API: https://api.themoviedb.org/3
   const searchPath = import.meta.env.VITE_MOVIE_API_SEARCH_PATH;
-  const apiToken = import.meta.env.VITE_MOVIE_API_TOKEN;
+  const apiToken = import.meta.env.VITE_MOVIE_API_TOKEN; // Add account token to .env file to get results from API
   const imgURL = import.meta.env.VITE_MOVIE_API_IMG_URL;
+
+  const normalizeMovies = (results) =>
+    (results || []).map((m) => ({
+      id: m.id,
+      title: m.title,
+      year: m.release_date,
+      poster_path: m.poster_path,
+      imageURL: m.poster_path ? `${imgURL}${m.poster_path}` : "",
+      description: m.overview,
+      type: "movie"
+    }));
 
   useEffect(() => {
     if (!query) return;
@@ -35,8 +46,10 @@ export default function Movies() {
         }
 
         const result = await response.json();
-        setMovies(result.results || []);
-        localStorage.setItem("movies", JSON.stringify(result.results || []));
+        const normalized = normalizeMovies(result.results);
+        setMovies(normalized);
+        // ✅ persist normalized movies so Movie.jsx can read them
+        localStorage.setItem("movies", JSON.stringify(normalized));
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Something went wrong while fetching movies.");
@@ -57,11 +70,12 @@ export default function Movies() {
       )}
       {error && <p className="error">{error}</p>}
       {movies.length > 0 && (
-      <>
-        <h2>Results</h2><Results movies={movies} imageURL={imgURL} />
-      </>
+        <>
+          <h2>Results</h2>
+          <Results items={movies} />
+        </>
       )}
-        {query && movies.length === 0 && !loading && !error && (
+      {query && movies.length === 0 && !loading && !error && (
         <p>No movies were found for "{query}".</p>
       )}
     </>

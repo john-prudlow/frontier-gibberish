@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
 import { slugify } from "../utils/slugify";
 
-export default function Card({ id, title, date, imageURL }) {
-  const year = date.split("-")[0];
+export default function Card({ item }) {
+  const year = item.year ? String(item.year).split("-")[0] : "";
+  const routeType = item.type || "item"; // fallback
+  const route = `/${routeType}/${item.id}/${slugify(item.title || "")}`;
 
   return (
-    <li data-id={id}>
-      <Link to={`/movie/${id}/${slugify(title)}`}>
+    <li data-id={item.id}>
+      <Link to={route}>
         <h3>
-          {title} {year ? `(${year})` : ""}
+          {item.title} {year ? `(${year})` : ""}
         </h3>
-        {imageURL ? (
-          <img src={imageURL} alt={title} />
+        {item.imageURL ? (
+          <img src={item.imageURL} alt={item.title} />
         ) : (
           <div className="placeholderIMG">Image Not Available</div>
         )}

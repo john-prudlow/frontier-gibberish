@@ -1,49 +1,65 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import GamesForm from "./Games";
-import Card from "../components/Card";
 
 export default function Game() {
-  const params = useParams();
+  const { id } = useParams();
   const [game, setGame] = useState(null);
-  const apiURL = import.meta.env.VITE_GAME_API_URL;
-  const apiKey = import.meta.env.VITE_GAME_API_KEY;
-  console.log(apiURL);
+  const [favorites, setFavorites] = useState({ movies: [], games: [] });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-      const response = await fetch(`${apiURL}${params.game}`, {
-        method: 'GET',
-        headers: {
-            'x-api-key': apiKey,
-        }
-      });
-      const result = await response.json();
-      setGame(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+    const search = localStorage.getItem("games");
+    if (search) {
+      const games = JSON.parse(search);
+      const match = games.find((g) => g.id === Number(id));
+      setGame(match);
+    }
+
+    const saved = localStorage.getItem("favorites");
+    if (saved) {
+      setFavorites(JSON.parse(saved));
+    }
+  }, [id]);
+
+  const handleClick = () => {
+    if (!game) return;
+
+    const newFavorite = {
+      id: game.id,
+      title: game.title,
+      imageURL: game.imageURL,
+      description: game.description,
+      type: "game"
     };
 
-    fetchData();
-  }, [params.game]);
+    if (favorites.games.some((fav) => fav.id === game.id)) return;
+
+    const updated = {
+      ...favorites,
+      games: [...favorites.games, newFavorite],
+    };
+
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
 
   return (
     <>
-    <GamesForm />
-    <h2>Results</h2>
-    <ul className="results">
-        {game?.results?.map((game) => (
-            <Card 
-                id={game.id}
-                title={game.name}
-                date={game.year}
-                imageURL={game.image}
-                description={game.short_description}
-            />
-        ))}
-    </ul>
+      {game ? (
+        <div className="details">
+          {game.imageURL && (
+            <img src={game.imageURL} alt={game.title} className="thumb" />
+          )}
+          <div className="summary">
+            <h2>{game.title}</h2>
+            <p>{game.description}</p>
+            <button className="addFavoriteBtn btn" onClick={handleClick}>
+              <i className="fa-solid fa-plus"></i> Add to Favorites
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p>Game not found</p>
+      )}
     </>
   );
 }
